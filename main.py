@@ -1,3 +1,5 @@
+__copyright__ = "Copyright (c) 2018-2023 Cisco Systems. All rights reserved."
+
 from dataclasses import dataclass
 import radkit_client
 import ipaddress
@@ -21,23 +23,27 @@ def startup():
 def initial_setup():
     hosts = []
     cont = True
+    print("Please add an IP address of a device to be reviewed regarding Netconf")
     while cont:
-        print("Please add a device to be reviewed regarding Netconf")
         device_source_ip = ipverifications.ip_validator_input("Inventory Management IP for the device ")
         hosts.append(device_source_ip)
         print("Do you want to add another device?")
-        res = input("Yes or No > ")
-        if res == "No":
+        res = input("y or n > ")
+        if res == "n":
             cont = False
             break
-        
-    
+
     #hosts = ['172.12.0.3', '172.12.0.4']
     for i in hosts:
         hostname = radkit_cli.find_device(service, i)
 
-        print ("Validating NETCONF Status for Device "+hostname)
+        print ("\nValidating NETCONF Status for Device "+hostname)
         ncstat = netconfparser.netconfstatus(hostname)
+        ncstat.netconfparser(service)
+        print (ncstat.__dict__)
+
+        print ("\nValidating yang-magement Status for Device "+hostname)
+        ncstat = netconfparser.yangprocess(hostname)
         ncstat.netconfparser(service)
         print (ncstat.__dict__)
         '''
